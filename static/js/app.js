@@ -48,18 +48,24 @@
 	var Marionette = __webpack_require__(4);
 
 
-	var TodoList = Marionette.LayoutView.extend({
-	    el: '#app-hook',
+	var ToDo = Marionette.LayoutView.extend({
+	    tagName: 'li',
 	    template: __webpack_require__(7)
 	});
 
+
+	var TodoList = Marionette.CollectionView.extend({
+	    el: '#app-hook',
+	    tagName: 'ul',
+
+	    childView: ToDo
+	});
+
 	var todo = new TodoList({
-	    model: new Backbone.Model({
-	        items: [
-	            {assignee: 'Scott', text: 'Write a book about Marionette'},
-	            {assignee: 'Andrew', text: 'Do some coding'}
-	        ]
-	    })
+	    collection: new Backbone.Collection([
+	        {assignee: 'Scott', text: 'Write a book about Marionette'},
+	        {assignee: 'Andrew', text: 'Do some coding'}
+	    ])
 	});
 
 	todo.render();
@@ -17750,15 +17756,11 @@
 	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<ul>\n    ';
-	 _.each(items, function(item) { 
-	__p+='\n    <li>'+
-	((__t=( item.text ))==null?'':_.escape(__t))+
+	__p+=''+
+	((__t=( text ))==null?'':_.escape(__t))+
 	' &mdash; '+
-	((__t=( item.assignee ))==null?'':_.escape(__t))+
-	'</li>\n    ';
-	 }) 
-	__p+='\n</ul>';
+	((__t=( assignee ))==null?'':_.escape(__t))+
+	'\n';
 	}
 	return __p;
 	};
