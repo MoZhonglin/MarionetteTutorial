@@ -17783,47 +17783,38 @@
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone = __webpack_require__(2);
 	var Marionette = __webpack_require__(1);
 
-	var ToDoModel = __webpack_require__(7);
+	var FormView = __webpack_require__(9);
+	var ListView = __webpack_require__(11);
 
 
-	var ToDo = Marionette.LayoutView.extend({
-	    tagName: 'li',
-	    template: __webpack_require__(9)
-	});
-
-
-	var TodoList = Marionette.CompositeView.extend({
+	var Layout = Marionette.LayoutView.extend({
 	    el: '#app-hook',
-	    template: __webpack_require__(10),
 
-	    childView: ToDo,
-	    childViewContainer: 'ul',
+	    template: __webpack_require__(13),
 
-	    ui: {
-	        assignee: '#id_assignee',
-	        form: 'form',
-	        text: '#id_text'
-	    },
-
-	    triggers: {
-	        'submit @ui.form': 'add:todo:item'
+	    regions: {
+	        form: '.form',
+	        list: '.list'
 	    },
 
 	    collectionEvents: {
 	        add: 'itemAdded'
 	    },
 
-	    modelEvents: {
-	        change: 'render'
+	    onShow: function() {
+	        var formView = new FormView({model: this.model});
+	        var listView = new ListView({collection: this.collection});
+
+	        this.showChildView('form', formView);
+	        this.showChildView('list', listView);
 	    },
 
-	    onAddTodoItem: function() {
+	    onChildviewAddTodoItem: function(child) {
 	        this.model.set({
-	            assignee: this.ui.assignee.val(),
-	            text: this.ui.text.val()
+	            assignee: child.ui.assignee.val(),
+	            text: child.ui.text.val()
 	        }, {validate: true});
 
 	        var items = this.model.pick('assignee', 'text');
@@ -17838,11 +17829,77 @@
 	    }
 	});
 
+	module.exports = Layout;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// views/form.js
+	var Marionette = __webpack_require__(1);
+
+	var FormView = Marionette.LayoutView.extend({
+	    tagName: 'form',
+	    template: __webpack_require__(10),
+
+	    triggers: {
+	        submit: 'add:todo:item'
+	    },
+
+	    modelEvents: {
+	        change: 'render'
+	    },
+
+	    ui: {
+	        assignee: '#id_assignee',
+	        text: '#id_text'
+	    }
+	});
+
+
+	module.exports = FormView;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<label for="id_text">Todo Text</label>\n<input type="text" name="text" id="id_text" value="'+
+	((__t=( text ))==null?'':_.escape(__t))+
+	'" />\n<label for="id_assignee">Assign to</label>\n<input type="text" name="assignee" id="id_assignee" value="'+
+	((__t=( assignee ))==null?'':_.escape(__t))+
+	'"/>\n\n<button id="btn-add">Add Item</button>';
+	}
+	return __p;
+	};
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// views/list.js
+	var Marionette = __webpack_require__(1);
+
+	var ToDo = Marionette.LayoutView.extend({
+	    tagName: 'li',
+	    template: __webpack_require__(12)
+	});
+
+
+	var TodoList = Marionette.CollectionView.extend({
+	    tagName: 'ul',
+	    childView: ToDo
+	});
+
 
 	module.exports = TodoList;
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
@@ -17860,22 +17917,17 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/* 13 */
+/***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
+	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<ul></ul>\n<form>\n    <label for="id_text">Todo Text</label>\n    <input type="text" name="text" id="id_text" value="'+
-	((__t=( text ))==null?'':_.escape(__t))+
-	'" />\n    <label for="id_assignee">Assign to</label>\n    <input type="text" name="assignee" id="id_assignee" value="'+
-	((__t=( assignee ))==null?'':_.escape(__t))+
-	'"/>\n\n    <button id="btn-add">Add Item</button>\n</form>\n';
+	__p+='<div class="list"></div>\n<div class="form"></div>';
 	}
 	return __p;
 	};
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }
 /******/ ]);
