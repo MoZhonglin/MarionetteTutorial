@@ -47,44 +47,55 @@
 	var Backbone = __webpack_require__(1);
 	var Marionette = __webpack_require__(4);
 
+	var ToDoModel = __webpack_require__(7);
+
 
 	var ToDo = Marionette.LayoutView.extend({
 	    tagName: 'li',
-	    template: __webpack_require__(7)
+	    template: __webpack_require__(8)
 	});
 
 
 	var TodoList = Marionette.CompositeView.extend({
 	    el: '#app-hook',
-	    template: __webpack_require__(8),
+	    template: __webpack_require__(9),
 
 	    childView: ToDo,
 	    childViewContainer: 'ul',
 
-	    ui: {  // 1
+	    ui: {
 	        assignee: '#id_assignee',
 	        form: 'form',
 	        text: '#id_text'
 	    },
 
-	    triggers: {  // 2
+	    triggers: {
 	        'submit @ui.form': 'add:todo:item'
 	    },
 
-	    collectionEvents: {  // 3
+	    collectionEvents: {
 	        add: 'itemAdded'
 	    },
 
-	    onAddTodoItem: function() {  // 4
-	        this.collection.add({
-	            assignee: this.ui.assignee.val(),  // 5
-	            text: this.ui.text.val()
-	        });
+	    modelEvents: {
+	        change: 'render'
 	    },
 
-	    itemAdded: function() {  // 6
-	        this.ui.assignee.val('');
-	        this.ui.text.val('');
+	    onAddTodoItem: function() {
+	        this.model.set({
+	            assignee: this.ui.assignee.val(),
+	            text: this.ui.text.val()
+	        }, {validate: true});
+
+	        var items = this.model.pick('assignee', 'text');
+	        this.collection.add(items);
+	    },
+
+	    itemAdded: function() {
+	        this.model.set({
+	            assignee: '',
+	            text: ''
+	        });
 	    }
 	});
 
@@ -92,8 +103,10 @@
 	    collection: new Backbone.Collection([
 	        {assignee: 'Scott', text: 'Write a book about Marionette'},
 	        {assignee: 'Andrew', text: 'Do some coding'}
-	    ])
+	    ]),
+	    model: new ToDoModel()
 	});
+
 	todo.render();
 
 /***/ },
@@ -17779,6 +17792,40 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Backbone = __webpack_require__(1);
+
+
+	var ToDo = Backbone.Model.extend({
+	    defaults: {
+	        assignee: '',
+	        text: ''
+	    },
+
+	    validate: function(attrs) {
+	        var errors = {};
+	        var hasError = false;
+	        if (!attrs.assignee) {
+	            errors.assignee = 'assignee must be set';
+	            hasError = true;
+	        }
+	        if (!attrs.text) {
+	            errors.text = 'text must be set';
+	            hasError = true;
+	        }
+
+	        if (hasError) {
+	            return errors;
+	        }
+	    }
+	});
+
+
+	module.exports = ToDo;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -17794,17 +17841,22 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function(obj){
+	/* WEBPACK VAR INJECTION */(function(_) {module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<ul></ul>\n<form>\n    <label for="id_text">Todo Text</label>\n    <input type="text" name="text" id="id_text" />\n    <label for="id_assignee">Assign to</label>\n    <input type="text" name="assignee" id="id_assignee" />\n\n    <button id="btn-add">Add Item</button>\n</form>';
+	__p+='<ul></ul>\n<form>\n    <label for="id_text">Todo Text</label>\n    <input type="text" name="text" id="id_text" value="'+
+	((__t=( text ))==null?'':_.escape(__t))+
+	'" />\n    <label for="id_assignee">Assign to</label>\n    <input type="text" name="assignee" id="id_assignee" value="'+
+	((__t=( assignee ))==null?'':_.escape(__t))+
+	'"/>\n\n    <button id="btn-add">Add Item</button>\n</form>\n';
 	}
 	return __p;
 	};
 
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }
 /******/ ]);
