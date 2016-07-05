@@ -54,11 +54,12 @@
 	});
 
 
-	var TodoList = Marionette.CollectionView.extend({
+	var TodoList = Marionette.CompositeView.extend({
 	    el: '#app-hook',
-	    tagName: 'ul',
+	    template: __webpack_require__(8),
 
-	    childView: ToDo
+	    childView: ToDo,
+	    childViewContainer: 'ul'
 	});
 
 	var todo = new TodoList({
@@ -17766,6 +17767,19 @@
 	};
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<ul></ul>\n<form>\n    <label for="id_text">Todo Text</label>\n    <input type="text" name="text" id="id_text" />\n    <label for="id_assignee">Assign to</label>\n    <input type="text" name="assignee" id="id_assignee" />\n\n    <button id="btn-add">Add Item</button>\n</form>';
+	}
+	return __p;
+	};
+
 
 /***/ }
 /******/ ]);
